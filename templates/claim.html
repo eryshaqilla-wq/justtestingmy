@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red Packet</title>
+</head>
+<body style="background:#c62828;font-family:Arial;color:white;padding:30px">
+
+<h2>🧧 Red Packet</h2>
+
+<div style="background:white;color:black;padding:20px;border-radius:15px">
+
+<input id="addr" placeholder="0x..." style="width:100%;padding:10px">
+<button onclick="claim()">Claim</button>
+
+<p id="result"></p>
+
+<div id="list"></div>
+
+</div>
+
+<script>
+const pid = "{{ pid }}";
+
+async function load(){
+    const res = await fetch("/api/packet/"+pid);
+    const data = await res.json();
+
+    let html="";
+    data.claims
+      .sort((a,b)=>b.amount-a.amount)
+      .forEach((c,i)=>{
+        html+=`
+        <div style="background:red;color:white;padding:10px;margin:5px;border-radius:10px;display:flex;justify-content:space-between">
+            <div>${i+1}</div>
+            <div>${c.wallet.slice(0,6)}...${c.wallet.slice(-4)}</div>
+            <div>$${c.amount}</div>
+        </div>`;
+      });
+
+    document.getElementById("list").innerHTML = html;
+}
+
+async function claim(){
+    const addr = document.getElementById("addr").value;
+
+    const res = await fetch("/api/claim/"+pid,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({address:addr})
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+        document.getElementById("result").innerText="You got $"+data.amount;
+        load();
+    }else{
+        document.getElementById("result").innerText=data.error;
+    }
+}
+
+load();
+</script>
+
+</body>
+</html>
