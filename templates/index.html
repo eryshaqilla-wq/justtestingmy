@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gacha Red Packet</title>
+</head>
+<body style="text-align:center;font-family:Arial;padding:40px;background:#f5f5f5">
+
+<h1 style="color:#facc15;">🧧 Gacha Red Packet</h1>
+
+<button onclick="createPacket()">Create Red Packet</button>
+
+<script>
+async function createPacket(){
+    const res = await fetch("/api/create",{method:"POST"});
+    const data = await res.json();
+    window.location = "/packet/"+data.id;
+}
+</script>
+
+</body>
+</html>
